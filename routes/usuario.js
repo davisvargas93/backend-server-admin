@@ -91,7 +91,7 @@ app.put('/:id', mdAutenticacion.vericaToken, (req, res) => {
 // =======================================
 // Crear un nuevo usuario 
 // =======================================
-app.post('/', mdAutenticacion.vericaToken, (req, res) => {
+app.post('/', (req, res) => {
 
     var body = req.body;
     var usuario = new usuarioModel({
