@@ -34,15 +34,44 @@ app.get('/', (req, res, next) => {
                 res.status(200).json({
                     ok: true,
                     medicos: medicos,
-                    toatl: conteo
+                    total: conteo
                 });
             });
         });
 });
+// =======================================
+// Obtener un  médico 
+// =======================================
+app.get('/:id', (req, res) => {
+        var id = req.params.id;
+        medicoModel.findById(id)
+            .populate('usuario', 'nombre email img')
+            .populate('hospital')
+            .exec((err, medico) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error al busca medico',
+                        errors: err
+                    });
+                }
+                if (!medico) {
+                    return res.status(400).json({
+                        ok: false,
+                        mensaje: 'El medico con el ' + id + ' no existe',
+                        errors: { message: 'No existe un medico con ese ID' }
+                    });
+                }
+                res.status(200).json({
+                    ok: true,
+                    medico: medico
+                });
+            })
 
-// =======================================
-// Actualizar medico 
-// =======================================
+    })
+    // =======================================
+    // Actualizar médico 
+    // =======================================
 app.put('/:id', mdAutenticacion.vericaToken, (req, res) => {
     var body = req.body;
     var id = req.params.id;

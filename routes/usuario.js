@@ -21,7 +21,7 @@ app.get('/', (req, res, next) => {
     var desde = req.query.desde || 0;
     desde = Number(desde);
 
-    usuarioModel.find({}, 'nombre email img role')
+    usuarioModel.find({}, 'nombre email img role google')
         .skip(desde)
         .limit(5)
         .exec((err, usuarios) => {
@@ -48,7 +48,7 @@ app.get('/', (req, res, next) => {
 // =======================================
 // Actualizar usuario 
 // =======================================
-app.put('/:id', mdAutenticacion.vericaToken, (req, res) => {
+app.put('/:id', [mdAutenticacion.vericaToken, mdAutenticacion.vericaADMIN_ROLE], (req, res) => {
     var body = req.body;
     var id = req.params.id;
     usuarioModel.findById(id, (err, usuario) => {
@@ -122,7 +122,7 @@ app.post('/', (req, res) => {
 // =======================================
 // Elimnar usuario por el ID 
 // =======================================
-app.delete('/:id', mdAutenticacion.vericaToken, (req, res) => {
+app.delete('/:id', [mdAutenticacion.vericaToken, mdAutenticacion.vericaADMIN_ROLE], (req, res) => {
     var id = req.params.id;
 
     usuarioModel.findByIdAndRemove(id, (err, usuarioBorrado) => {

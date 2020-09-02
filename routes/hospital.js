@@ -10,6 +10,36 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
 // =======================================
+// Obtener hospital por ID 
+// =======================================
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    hospitalModel.findById(id)
+        .populate('usuario', 'nombre img email')
+        .exec((err, hospital) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al busca hospital',
+                    errors: err
+                });
+            }
+            if (!hospital) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'El hospital con el ' + id + ' no existe',
+                    errors: { message: 'No existe un hospital con ese ID' }
+                });
+            }
+            return res.status(200).json({
+                ok: true,
+                hospital: hospital
+            });
+
+        })
+});
+
+// =======================================
 // Obtener todos los hospitales 
 // =======================================
 app.get('/', (req, res, next) => {
@@ -19,7 +49,7 @@ app.get('/', (req, res, next) => {
 
     hospitalModel.find({})
         .skip(desde)
-        .limit(5)
+        .limit(15)
         .populate('usuario', 'nombre email')
         .exec((err, hospitales) => {
             if (err) {
@@ -41,6 +71,8 @@ app.get('/', (req, res, next) => {
             })
         });
 });
+
+
 
 // =======================================
 // Actualizar hospital 
